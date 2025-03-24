@@ -1,12 +1,7 @@
-<!-- register.html -->
-
-
 {% extends "mailing/base.html" %}
-{% load crispy_forms_tags %}
 {% block title %}Регистрация{% endblock %}
 
 {% block content %}
-
 
 <div class="container">
     <div class="row d-flex justify-content-center text-start">
@@ -16,14 +11,12 @@
                     <h2>Регистрация</h2>
                     <form method="post">
                         {% csrf_token %}
-                        {{ form|crispy }}
+                        {{ form.as_p }}  {# Используйте as_p, as_table или as_ul для рендеринга формы #}
                         <button type="submit" class="btn btn-outline-primary">Зарегистрироваться</button>
                     </form>
-
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 

@@ -1,0 +1,52 @@
+[
+    {
+        "model": "mailing.recipient",
+        "pk": 1,
+        "fields": {
+            "email": "leonardo.dicaprio@example.com",
+            "full_name": "Леонардо ДиКаприо",
+            "comment": "Оскароносный актер",
+            "owner": null
+        }
+    },
+    {
+        "model": "mailing.recipient",
+        "pk": 3,
+        "fields": {
+            "email": "taylor.swift@example.com",
+            "full_name": "Тейлор Свифт",
+            "comment": "Музыкальная икона",
+            "owner": 1
+        }
+    },
+    {
+        "model": "mailing.recipient",
+        "pk": 4,
+        "fields": {
+            "email": "dwayne.johnson@example.com",
+            "full_name": "Дуэйн Джонсон",
+            "comment": "Сила и харизма",
+            "owner": 1
+        }
+    },
+    {
+        "model": "mailing.recipient",
+        "pk": 5,
+        "fields": {
+            "email": "beyonce@example.com",
+            "full_name": "Бейонсе",
+            "comment": "Королева поп-музыки",
+            "owner": 1
+        }
+    },
+    {
+        "model": "mailing.recipient",
+        "pk": 6,
+        "fields": {
+            "email": "robert.downey.jr@example.com",
+            "full_name": "Роберт Дауни-младший",
+            "comment": "Звезда Marvel",
+            "owner": 1
+        }
+    }
+]

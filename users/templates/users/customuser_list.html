@@ -11,14 +11,14 @@
     </div>
 </div>
 
-
 <div class="table-responsive small">
     <table class="table table-striped table-sm">
         <thead>
         <tr>
-            <th scope="col">id</th>
+            <th scope="col">ID</th>
             <th scope="col">Почта</th>
-            <th scope="col">Статус активный/неактивный</th>
+            <th scope="col">Статус</th>
+            <th scope="col" class="text-end">Действия</th>
         </tr>
         </thead>
         <tbody>
@@ -26,7 +26,7 @@
         <tr>
             <td>{{ system_user.id }}</td>
             <td>{{ system_user.email }}</td>
-            <td>{{ system_user.is_active }}</td>
+            <td>{{ system_user.is_active|yesno:"Активный,Неактивный" }}</td>
             <td class="text-end" style="width: 20vh;">
                 <form action="{% url 'users:user_block' system_user.pk %}" method="post">
                     {% csrf_token %}

@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse
 from django.core.mail import send_mail
 from datetime import datetime
 from django.utils import timezone
@@ -223,6 +223,7 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
 
 class MailingAttemptListView(LoginRequiredMixin, ListView):
     model = MailingAttempt
+    paginate_by = 10  # Количество записей на странице
 
     def get_queryset(self):
         user = self.request.user
@@ -230,15 +231,24 @@ class MailingAttemptListView(LoginRequiredMixin, ListView):
             return MailingAttempt.objects.all()
         return MailingAttempt.objects.filter(mailing__owner=user.id)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_manager'] = self.request.user.groups.filter(name="Менеджер").exists()
+        return context
+
 
 class MailingStopView(LoginRequiredMixin, View):
     def post(self, request, pk):
         mailing = get_object_or_404(Mailing, pk=pk)
         user = request.user
         is_manager = user.groups.filter(name="Менеджер").exists()
-        if is_manager or user == mailing.owner:
-            mailing.status = "completed"
-            mailing.save()
 
-            return redirect("mailing:mailing_list")
+        if is_manager or user == mailing.owner:
+            mailing.status = Mailing.COMPLETED
+            try:
+                mailing.save()
+                return redirect("mailing:mailing_list")
+            except Exception as e:
+                return HttpResponse("Ошибка при сохранении рассылки: " + str(e), status=500)
+
         return HttpResponseForbidden("У вас нет прав для отключения рассылки")

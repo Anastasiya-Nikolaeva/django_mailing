@@ -1,5 +1,4 @@
 {% extends "mailing/base.html" %}
-{% load crispy_forms_tags %}
 {% block title %}Вход{% endblock %}
 
 {% block content %}
@@ -12,7 +11,7 @@
                     <h2 class="text-center mb-4">Вход</h2>
                     <form method="post">
                         {% csrf_token %}
-                        {{ form|crispy }}
+                        {{ form.as_p }}  {# Используйте as_p, as_table или as_ul для рендеринга формы #}
                         <button type="submit" class="btn btn-primary w-100">Войти</button>
                     </form>
                 </div>
