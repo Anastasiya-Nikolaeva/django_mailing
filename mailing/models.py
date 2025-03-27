@@ -6,7 +6,7 @@ from users.models import CustomUser
 class Recipient(models.Model):
     """Модель Получатель рассылки"""
 
-    email = models.EmailField(unique=True, verbose_name='Почта', help_text='Адрес почты должен быть уникальным')
+    email = models.EmailField(verbose_name='Почта', help_text='Адрес почты должен быть уникальным')
     full_name = models.CharField(max_length=200, verbose_name='ФИО')
     comment = models.TextField(null=True, blank=True, verbose_name='Комментарий')
     owner = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True,
@@ -36,7 +36,11 @@ class Message(models.Model):
     class Meta:
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
-        ordering = ['id']
+        permissions = [
+            ("can_view_messages", "Может просматривать сообщения"),
+            ("can_edit_messages", "Может редактировать сообщения"),
+            ("can_delete_messages", "Может удалять сообщения"),
+        ]
 
 
 class Mailing(models.Model):

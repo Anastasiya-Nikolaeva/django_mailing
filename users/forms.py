@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
+from django import forms
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -23,3 +24,18 @@ class CustomUserCreationForm(UserCreationForm):
         )
 
         self.fields["password2"].help_text = "Введите тот же пароль для подтверждения."
+
+
+class CustomUserEditForm(forms.ModelForm):
+    """Форма для редактирования профиля пользователя"""
+
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'first_name', 'last_name']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['email'].label = "Электронная почта"
+        self.fields['first_name'].label = "Имя"
+        self.fields['last_name'].label = "Фамилия"
