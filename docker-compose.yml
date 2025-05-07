@@ -1,28 +1,88 @@
 version: '3.12'
 
 services:
-  web:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"  # Порт для доступа к бэкенду
     env_file:
       - .env
-    volumes:
-      - .:/app  # Монтирование текущей директории в контейнер
-    depends_on:
-      - db
+    container_name: app
+    command: sh -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    expose:
+      - 8000
 
-  db:
-    image: postgres:17
-    restart: always
-    environment:
-      POSTGRES_USER: ${USER}
-      POSTGRES_PASSWORD: ${PASSWORD}
-      POSTGRES_DB: ${NAME}
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - .:/app
+      - static_files:/app/static
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  redis:
+    image: redis:6
+    container_name: redis
+    command: sh -c "redis-server --save 20 1 --loglevel warning"
+    volumes:
+      - data.cache:/data
+    ports:
+      - "6380:6379"
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery
+    env_file:
+      - .env
+    command: sh -c "celery -A config worker --loglevel=info"
+    depends_on:
+        - redis
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: beat
+    command: sh -c "celery -A config beat --loglevel=info"
+    depends_on:
+        - app
+        - postgres
+        - redis
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - static_files:/app/static
+    depends_on:
+       - app
+
 
 volumes:
-  db_data:
+  static_files:
+  postgres_data:
+  data.cache:
