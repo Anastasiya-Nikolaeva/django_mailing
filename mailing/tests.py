@@ -30,7 +30,6 @@ class RecipientCreateViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Recipient.objects.filter(full_name="Test Recipient").exists())
 
-
         recipient = Recipient.objects.get(full_name="Test Recipient")
         self.assertEqual(recipient.owner, self.user)
 
