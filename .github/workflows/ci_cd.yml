@@ -2,6 +2,8 @@ name: Django CI/CD Pipeline
 
 on: [push, pull_request]
 
+env:
+  SECRET_KEY : django-insecure-4$pgq!emnyunno+b2s6)02urs@sbuskrs(l_wr4s)9t^_jofyp
 
 jobs:
   lint:
