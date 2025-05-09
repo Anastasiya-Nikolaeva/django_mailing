@@ -23,32 +23,32 @@ class RecipientCreateViewTests(TestCase):
 
     def test_recipient_create_view_creates_recipient(self):
         data = {
-            "full_name": "Test Recipient",  # Убедитесь, что это поле заполнено
+            "full_name": "Test Recipient",
             "email": "eritreya666@gmail.com",
         }
         response = self.client.post(reverse("mailing:recipient_create"), data)
-        self.assertEqual(response.status_code, 302)  # Ожидаем перенаправление
+        self.assertEqual(response.status_code, 302)
         self.assertTrue(Recipient.objects.filter(full_name="Test Recipient").exists())
 
-        # Проверяем, что владелец получателя установлен правильно
+
         recipient = Recipient.objects.get(full_name="Test Recipient")
         self.assertEqual(recipient.owner, self.user)
 
     def test_recipient_create_view_invalid_data(self):
         data = {
-            "full_name": "",  # Пример некорректных данных
-            "email": "invalid-email",  # Пример некорректных данных
+            "full_name": "",
+            "email": "invalid-email",
         }
         response = self.client.post(reverse("mailing:recipient_create"), data)
         self.assertEqual(
             response.status_code, 200
-        )  # Проверяем, что форма не прошла валидацию и осталась на той же странице
+        )
 
-        form = response.context["form"]  # Получаем форму из контекста ответа
-        self.assertTrue(form.errors)  # Проверяем, что есть ошибки
+        form = response.context["form"]
+        self.assertTrue(form.errors)
         self.assertIn(
             "full_name", form.errors
-        )  # Проверяем, что ошибка валидации для поля 'full_name'
+        )
         self.assertIn(
             "This field is required.", form.errors["full_name"]
-        )  # Проверяем, что ошибка соответствует ожидаемой
+        )
