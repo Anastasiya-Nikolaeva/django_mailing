@@ -63,7 +63,7 @@ jobs:
 
 
   deploy:
-    needs: builds
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
