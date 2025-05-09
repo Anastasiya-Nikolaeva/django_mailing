@@ -71,7 +71,9 @@ class RecipientDeleteView(LoginRequiredMixin, DeleteView):
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
-        return HttpResponseForbidden("Вы не можете просматривать или удалять получателя рассылки.")
+        return HttpResponseForbidden(
+            "Вы не можете просматривать или удалять получателя рассылки."
+        )
 
 
 class MessageListView(LoginRequiredMixin, ListView):
@@ -112,7 +114,9 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
-        return HttpResponseForbidden("Вы не можете просматривать или изменять это сообщение.")
+        return HttpResponseForbidden(
+            "Вы не можете просматривать или изменять это сообщение."
+        )
 
 
 class MessageDeleteView(LoginRequiredMixin, DeleteView):
@@ -123,7 +127,9 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
-        return HttpResponseForbidden("Вы не можете просматривать или удалять это сообщение.")
+        return HttpResponseForbidden(
+            "Вы не можете просматривать или удалять это сообщение."
+        )
 
 
 class MailingListView(LoginRequiredMixin, ListView):
@@ -163,13 +169,15 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = Mailing
     success_url = reverse_lazy("mailing:mailing_list")
-    fields = '__all__'
+    fields = "__all__"
 
     def dispatch(self, request, *args, **kwargs):
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
-        return HttpResponseForbidden("Вы не можете просматривать или изменять эту рассылку.")
+        return HttpResponseForbidden(
+            "Вы не можете просматривать или изменять эту рассылку."
+        )
 
 
 class MailingDeleteView(LoginRequiredMixin, DeleteView):
@@ -180,7 +188,9 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
-        return HttpResponseForbidden("Вы не можете просматривать или удалять эту рассылку.")
+        return HttpResponseForbidden(
+            "Вы не можете просматривать или удалять эту рассылку."
+        )
 
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
@@ -210,14 +220,20 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
             try:
                 send_mail(subject, message, from_email, [recipient])
                 response = f"{recipient}: Успешно отправлено"
-                MailingAttempt.objects.create(attempted_at=timezone.now(), status="success",
-                                              mail_server_response=response,
-                                              mailing=self.object)
+                MailingAttempt.objects.create(
+                    attempted_at=timezone.now(),
+                    status="success",
+                    mail_server_response=response,
+                    mailing=self.object,
+                )
             except Exception as e:
                 response = f"{recipient}: Ошибка: {e}"
-                MailingAttempt.objects.create(attempted_at=datetime.now(), status="failure",
-                                              mail_server_response=response,
-                                              mailing=self.object)
+                MailingAttempt.objects.create(
+                    attempted_at=datetime.now(),
+                    status="failure",
+                    mail_server_response=response,
+                    mailing=self.object,
+                )
         return redirect("mailing:mailing_list")
 
 
@@ -233,7 +249,9 @@ class MailingAttemptListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['is_manager'] = self.request.user.groups.filter(name="Менеджер").exists()
+        context["is_manager"] = self.request.user.groups.filter(
+            name="Менеджер"
+        ).exists()
         return context
 
 
@@ -249,6 +267,8 @@ class MailingStopView(LoginRequiredMixin, View):
                 mailing.save()
                 return redirect("mailing:mailing_list")
             except Exception as e:
-                return HttpResponse("Ошибка при сохранении рассылки: " + str(e), status=500)
+                return HttpResponse(
+                    "Ошибка при сохранении рассылки: " + str(e), status=500
+                )
 
         return HttpResponseForbidden("У вас нет прав для отключения рассылки")
