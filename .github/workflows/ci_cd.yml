@@ -2,6 +2,9 @@ name: Django CI/CD Pipeline
 
 on: [push, pull_request]
 
+env:
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
 jobs:
   lint:
     runs-on: ubuntu-latest
