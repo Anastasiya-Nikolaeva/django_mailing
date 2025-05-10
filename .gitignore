@@ -10,6 +10,7 @@ __pycache__/
 *$py.class
 *.pyc
 *.pyo
+*.pyd
 *.xlsx
 
 # Расширения C
@@ -69,6 +70,7 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+db_data/
 
 
 # Flask

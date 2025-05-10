@@ -31,11 +31,11 @@ class CustomUserEditForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'first_name', 'last_name']
+        fields = ["email", "first_name", "last_name"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['email'].label = "Электронная почта"
-        self.fields['first_name'].label = "Имя"
-        self.fields['last_name'].label = "Фамилия"
+        self.fields["email"].label = "Электронная почта"
+        self.fields["first_name"].label = "Имя"
+        self.fields["last_name"].label = "Фамилия"

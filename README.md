@@ -11,6 +11,9 @@
 Создать администратора - python manage.py csu
 Создать пользователя в группе "Пользователи" - python manage.py create_user
 Создать пользователя в группе "Менеджеры" - python manage.py create_manager
+Убедитесь, что у вас установлен Docker и Docker Compose.
+Склонируйте репозиторий: git@github.com:Anastasiya-Nikolaeva/django_mailing.git
+
 
 ### Технологии:
 Python
@@ -18,3 +21,4 @@ Bootstrap
 Django
 PostgreSQL
 Redis
+
