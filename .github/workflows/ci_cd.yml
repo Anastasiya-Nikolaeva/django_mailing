@@ -73,7 +73,7 @@ jobs:
       - name: Run remote commands
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd dev/django_mailing_deploy
+            cd dev/django_mailing
             git pull origin master
             docker compose down
             docker compose up -d --build
