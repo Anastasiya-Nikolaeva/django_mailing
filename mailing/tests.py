@@ -39,15 +39,9 @@ class RecipientCreateViewTests(TestCase):
             "email": "invalid-email",
         }
         response = self.client.post(reverse("mailing:recipient_create"), data)
-        self.assertEqual(
-            response.status_code, 200
-        )
+        self.assertEqual(response.status_code, 200)
 
         form = response.context["form"]
         self.assertTrue(form.errors)
-        self.assertIn(
-            "full_name", form.errors
-        )
-        self.assertIn(
-            "This field is required.", form.errors["full_name"]
-        )
+        self.assertIn("full_name", form.errors)
+        self.assertIn("This field is required.", form.errors["full_name"])
