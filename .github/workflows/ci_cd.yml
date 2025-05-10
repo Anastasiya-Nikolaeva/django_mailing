@@ -64,7 +64,7 @@ jobs:
       - name: Run remote commands
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd C:\Program code\PycharmProjects\django_mailing
+            cd /home/login
             git pull origin master
             docker compose down
             docker compose up -d --build
