@@ -102,7 +102,8 @@ SERVER_EMAIL = EMAIL_HOST_USER
 
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = (BASE_DIR / "static",)
+STATIC_ROOT = "/static/"
+# STATICFILES_DIRS = (BASE_DIR / "static",)
 
 
 MEDIA_URL = "/media/"
