@@ -67,8 +67,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "path/to/your/files/*"
-          target: "/path/on/remote/server"
+          source: "C:\Program code\PycharmProjects\django_mailing"
+          target: "/home/login/my_django_mailing"
 
       - name: Run remote commands
         run: |
