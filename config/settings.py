@@ -102,7 +102,7 @@ SERVER_EMAIL = EMAIL_HOST_USER
 
 
 STATIC_URL = "/static/"
-STATIC_ROOT = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
 # STATICFILES_DIRS = (BASE_DIR / "static",)
 
 
