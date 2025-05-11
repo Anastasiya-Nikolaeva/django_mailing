@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     """Функция для отправки рассылок."""
+
     def handle(self, *args, **kwargs):
         time_threshold_start = timezone.now() - timedelta(hours=20)
         time_threshold_end = timezone.now()
@@ -20,7 +21,8 @@ class Command(BaseCommand):
         mailings = Mailing.objects.filter(
             Q(status=Mailing.CREATED) | Q(status=Mailing.RUNNING),
             first_send_at__gte=time_threshold_start,
-            first_send_at__lte=time_threshold_end)
+            first_send_at__lte=time_threshold_end,
+        )
 
         for mailing in mailings:
             mailing.status = Mailing.RUNNING

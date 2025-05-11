@@ -13,10 +13,14 @@ class Command(BaseCommand):
         MailingAttempt.objects.all().delete()
 
         call_command("loaddata", "recipients_fixture.json", format="json")
-        self.stdout.write(self.style.SUCCESS("Получатели рассылок загружены из фикстур успешно"))
+        self.stdout.write(
+            self.style.SUCCESS("Получатели рассылок загружены из фикстур успешно")
+        )
         call_command("loaddata", "messages_fixture.json", format="json")
         self.stdout.write(self.style.SUCCESS("Сообщения загружены из фикстур успешно"))
         call_command("loaddata", "mailing_fixture.json", format="json")
         self.stdout.write(self.style.SUCCESS("Рассылки загружены из фикстур успешно"))
         call_command("loaddata", "mailing_attempt_fixture.json", format="json")
-        self.stdout.write(self.style.SUCCESS("Попытки рассылок загружены из фикстур успешно"))
+        self.stdout.write(
+            self.style.SUCCESS("Попытки рассылок загружены из фикстур успешно")
+        )
