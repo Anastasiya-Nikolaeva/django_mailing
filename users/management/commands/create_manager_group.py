@@ -7,16 +7,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Создаем группу "Менеджеры"
-        group, created = Group.objects.get_or_create(name='Менеджеры')
-        self.stdout.write(self.style.SUCCESS(f"Группа 'Менеджеры' {'создана' if created else 'уже существует'}."))
+        group, created = Group.objects.get_or_create(name="Менеджеры")
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Группа 'Менеджеры' {'создана' if created else 'уже существует'}."
+            )
+        )
 
         permissions = [
-            'can_view_messages',
-            'can_edit_messages',
-            'can_delete_messages',
-            'can_view_recipients',
-            'can_edit_recipients',
-            'can_delete_recipients',
+            "can_view_messages",
+            "can_edit_messages",
+            "can_delete_messages",
+            "can_view_recipients",
+            "can_edit_recipients",
+            "can_delete_recipients",
         ]
 
         for perm in permissions:
@@ -26,4 +30,4 @@ class Command(BaseCommand):
             except Permission.DoesNotExist:
                 self.stdout.write(self.style.WARNING(f"Права {perm} не найдены."))
 
-        self.stdout.write(self.style.SUCCESS(f"Права назначены группе 'Менеджеры'."))
+        self.stdout.write(self.style.SUCCESS("Права назначены группе 'Менеджеры'."))
