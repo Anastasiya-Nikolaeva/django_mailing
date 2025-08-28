@@ -15,10 +15,26 @@ from django.http import HttpResponseForbidden
 
 
 class UserListView(LoginRequiredMixin, ListView):
+    """
+    Представление для отображения списка пользователей.
+
+    Доступно только пользователям с разрешением на просмотр пользователей.
+    """
     model = CustomUser
     context_object_name = "users"
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на доступ к списку пользователей.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        *args: Дополнительные аргументы.
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на список пользователей или сообщение об ошибке.
+        """
         user = self.request.user
         if user.has_perm("users.view_customuser"):
             return super().dispatch(request, *args, **kwargs)
@@ -26,11 +42,24 @@ class UserListView(LoginRequiredMixin, ListView):
 
 
 class RegisterView(CreateView):
+    """
+    Представление для регистрации нового пользователя.
+    """
+
     form_class = CustomUserCreationForm
     template_name = "registration/register.html"
     success_url = reverse_lazy("mailing:index")
 
     def form_valid(self, form):
+        """
+        Обрабатывает валидную форму регистрации.
+
+        Параметры:
+        form (CustomUserCreationForm): Валидная форма с данными пользователя.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу успеха.
+        """
         user = form.save()
         user.is_active = False
         token = secrets.token_hex(16)
@@ -49,7 +78,21 @@ class RegisterView(CreateView):
 
 @method_decorator(permission_required("users.can_block_user"), name="dispatch")
 class UserBlockView(LoginRequiredMixin, View):
+    """
+    Представление для блокировки или разблокировки пользователя.
+    """
+
     def post(self, request, pk):
+        """
+        Обрабатывает запрос на блокировку или разблокировку пользователя.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        pk (int): Идентификатор пользователя.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на список пользователей.
+        """
         system_user = get_object_or_404(CustomUser, pk=pk)
         system_user.is_active = not system_user.is_active
         system_user.save()
@@ -57,6 +100,16 @@ class UserBlockView(LoginRequiredMixin, View):
 
 
 def email_verification(request, token):
+    """
+    Обрабатывает запрос на подтверждение электронной почты.
+
+    Параметры:
+    request (HttpRequest): Запрос от клиента.
+    token (str): Токен подтверждения.
+
+    Возвращает:
+    HttpResponse: Ответ с перенаправлением на страницу входа.
+    """
     user = get_object_or_404(CustomUser, token=token)
     user.is_active = True
     user.token = ""
@@ -65,19 +118,39 @@ def email_verification(request, token):
 
 
 class UserProfileView(LoginRequiredMixin, DetailView):
+    """
+    Представление для отображения профиля пользователя.
+    """
+
     model = CustomUser
     template_name = "users/user_profile.html"
     context_object_name = "user_profile"
 
     def get_object(self):
+        """
+        Возвращает текущего пользователя.
+
+        Возвращает:
+        CustomUser: Текущий пользователь.
+        """
         return self.request.user
 
 
 class UserProfileEditView(LoginRequiredMixin, UpdateView):
+    """
+    Представление для редактирования профиля пользователя.
+    """
+
     model = CustomUser
     form_class = CustomUserEditForm
     template_name = "users/user_profile_edit.html"
     success_url = reverse_lazy("users:user_profile")
 
     def get_object(self):
+        """
+        Возвращает текущего пользователя для редактирования.
+
+        Возвращает:
+        CustomUser: Текущий пользователь.
+        """
         return self.request.user
