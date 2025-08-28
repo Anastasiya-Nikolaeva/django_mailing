@@ -16,6 +16,15 @@ class IndexView(LoginRequiredMixin, TemplateView):
     template_name = "mailing/index.html"
 
     def get_context_data(self, **kwargs):
+        """
+        Получает контекст для шаблона.
+
+        Параметры:
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        dict: Обновленный контекст, содержащий данные для отображения на странице.
+        """
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context.update(get_index_page_cache_data(user))
@@ -24,14 +33,30 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
 class RecipientListView(LoginRequiredMixin, ListView):
     model = Recipient
+    template_name = "mailing/recipient_list.html"
 
     def get_queryset(self):
+        """
+        Получает список получателей для текущего пользователя.
+
+        Возвращает:
+        QuerySet: Список получателей, доступных для текущего пользователя.
+        """
         user = self.request.user
         if user.groups.filter(name="Менеджер").exists():
             return Recipient.objects.all()
         return Recipient.objects.filter(owner=user.id)
 
     def get_context_data(self, **kwargs):
+        """
+        Получает контекст для шаблона списка получателей.
+
+        Параметры:
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        dict: Обновленный контекст, содержащий информацию о том, является ли пользователь менеджером.
+        """
         context = super().get_context_data(**kwargs)
         is_manager = self.request.user.groups.filter(name="Менеджер").exists()
         context["is_manager"] = is_manager
@@ -44,7 +69,16 @@ class RecipientCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("mailing:recipient_list")
 
     def form_valid(self, form):
-        recipient = form.save()
+        """
+        Обрабатывает валидную форму для создания нового получателя.
+
+        Параметры:
+        form (RecipientForm): Валидная форма с данными получателя.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка получателей.
+        """
+        recipient = form.save(commit=False)
         user = self.request.user
         recipient.owner = user
         recipient.save()
@@ -57,6 +91,17 @@ class RecipientUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("mailing:recipient_list")
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на обновление получателя.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        *args: Дополнительные аргументы.
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка получателей или сообщение об ошибке.
+        """
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
@@ -68,6 +113,17 @@ class RecipientDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("mailing:recipient_list")
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на удаление получателя.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        *args: Дополнительные аргументы.
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка получателей или сообщение об ошибке.
+        """
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
@@ -80,12 +136,27 @@ class MessageListView(LoginRequiredMixin, ListView):
     model = Message
 
     def get_queryset(self):
+        """
+        Получает список сообщений для текущего пользователя.
+
+        Возвращает:
+        QuerySet: Список сообщений, доступных для текущего пользователя.
+        """
         user = self.request.user
         if user.groups.filter(name="Менеджер").exists():
             return Message.objects.all()
         return Message.objects.filter(owner=user.id)
 
     def get_context_data(self, **kwargs):
+        """
+        Получает контекст для шаблона списка сообщений.
+
+        Параметры:
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        dict: Обновленный контекст, содержащий информацию о том, является ли пользователь менеджером.
+        """
         context = super().get_context_data(**kwargs)
         is_manager = self.request.user.groups.filter(name="Менеджер").exists()
         context["is_manager"] = is_manager
@@ -98,7 +169,16 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("mailing:message_list")
 
     def form_valid(self, form):
-        message = form.save()
+        """
+        Обрабатывает валидную форму для создания нового сообщения.
+
+        Параметры:
+        form (MessageForm): Валидная форма с данными сообщения.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка сообщений.
+        """
+        message = form.save(commit=False)
         user = self.request.user
         message.owner = user
         message.save()
@@ -111,6 +191,17 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("mailing:message_list")
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на обновление сообщения.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        *args: Дополнительные аргументы.
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка сообщений или сообщение об ошибке.
+        """
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
@@ -124,6 +215,17 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("mailing:message_list")
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на удаление сообщения.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        *args: Дополнительные аргументы.
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка сообщений или сообщение об ошибке.
+        """
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
@@ -136,12 +238,27 @@ class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
 
     def get_queryset(self):
+        """
+        Получает список рассылок для текущего пользователя.
+
+        Возвращает:
+        QuerySet: Список рассылок, доступных для текущего пользователя.
+        """
         user = self.request.user
         if user.groups.filter(name="Менеджер").exists():
             return Mailing.objects.prefetch_related("recipients")
         return Mailing.objects.filter(owner=user.id).prefetch_related("recipients")
 
     def get_context_data(self, **kwargs):
+        """
+        Получает контекст для шаблона списка рассылок.
+
+        Параметры:
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        dict: Обновленный контекст, содержащий информацию о том, является ли пользователь менеджером.
+        """
         context = super().get_context_data(**kwargs)
         is_manager = self.request.user.groups.filter(name="Менеджер").exists()
         context["is_manager"] = is_manager
@@ -154,13 +271,28 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("mailing:mailing_list")
 
     def form_valid(self, form):
-        mailing = form.save()
+        """
+        Обрабатывает валидную форму для создания новой рассылки.
+
+        Параметры:
+        form (MailingForm): Валидная форма с данными рассылки.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка рассылок.
+        """
+        mailing = form.save(commit=False)
         user = self.request.user
         mailing.owner = user
         mailing.save()
         return super().form_valid(form)
 
     def get_form_kwargs(self):
+        """
+        Получает аргументы для формы.
+
+        Возвращает:
+        dict: Аргументы, переданные в форму, включая текущего пользователя.
+        """
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
@@ -172,6 +304,17 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     fields = "__all__"
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на обновление рассылки.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        *args: Дополнительные аргументы.
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка рассылок или сообщение об ошибке.
+        """
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
@@ -185,6 +328,17 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("mailing:mailing_list")
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на удаление рассылки.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        *args: Дополнительные аргументы.
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка рассылок или сообщение об ошибке.
+        """
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
@@ -192,22 +346,48 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
             "Вы не можете просматривать или удалять эту рассылку."
         )
 
-
 class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
 
     def get_queryset(self):
+        """
+        Получает список рассылок с предзагрузкой получателей.
+
+        Возвращает:
+        QuerySet: Список рассылок с предзагруженными получателями.
+        """
         queryset = Mailing.objects.prefetch_related("recipients")
         return queryset
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на просмотр деталей рассылки.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        *args: Дополнительные аргументы.
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу деталей рассылки или сообщение об ошибке.
+        """
         obj = super().get_object()
         if obj.owner == self.request.user:
             return super().dispatch(request, *args, **kwargs)
         return HttpResponseForbidden("Вы не можете просматривать эту рассылку.")
 
     def post(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на отправку сообщений рассылки.
 
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        *args: Дополнительные аргументы.
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка рассылок.
+        """
         self.object = self.get_object()
         subject = self.object.message
         message = self.object.message.message
@@ -242,21 +422,44 @@ class MailingAttemptListView(LoginRequiredMixin, ListView):
     paginate_by = 10  # Количество записей на странице
 
     def get_queryset(self):
+        """
+        Получает список попыток рассылки для текущего пользователя.
+
+        Возвращает:
+        QuerySet: Список попыток рассылки, доступных для текущего пользователя.
+        """
         user = self.request.user
         if user.groups.filter(name="Менеджер").exists():
             return MailingAttempt.objects.all()
         return MailingAttempt.objects.filter(mailing__owner=user.id)
 
     def get_context_data(self, **kwargs):
+        """
+        Получает контекст для шаблона списка попыток рассылки.
+
+        Параметры:
+        **kwargs: Дополнительные параметры, переданные в метод.
+
+        Возвращает:
+        dict: Обновленный контекст, содержащий информацию о том, является ли пользователь менеджером.
+        """
         context = super().get_context_data(**kwargs)
-        context["is_manager"] = self.request.user.groups.filter(
-            name="Менеджер"
-        ).exists()
+        context["is_manager"] = self.request.user.groups.filter(name="Менеджер").exists()
         return context
 
 
 class MailingStopView(LoginRequiredMixin, View):
     def post(self, request, pk):
+        """
+        Обрабатывает запрос на остановку рассылки.
+
+        Параметры:
+        request (HttpRequest): Запрос от клиента.
+        pk (int): Идентификатор рассылки.
+
+        Возвращает:
+        HttpResponse: Ответ с перенаправлением на страницу списка рассылок или сообщение об ошибке.
+        """
         mailing = get_object_or_404(Mailing, pk=pk)
         user = request.user
         is_manager = user.groups.filter(name="Менеджер").exists()

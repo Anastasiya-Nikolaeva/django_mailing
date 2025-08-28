@@ -4,8 +4,27 @@ from django.db import models
 
 
 class CustomUserManager(BaseUserManager):
+    """
+    Менеджер для модели пользователя.
+
+    Этот класс управляет созданием обычных пользователей и суперпользователей.
+    """
+
     def create_user(self, email, password=None, **extra_fields):
-        """Создание обычного пользователя"""
+        """
+        Создание обычного пользователя.
+
+        Параметры:
+        email (str): Электронная почта пользователя.
+        password (str, optional): Пароль пользователя.
+        **extra_fields: Дополнительные поля для создания пользователя.
+
+        Возвращает:
+        CustomUser: Созданный пользователь.
+
+        Исключения:
+        ValueError: Если email не указан.
+        """
         if not email:
             raise ValueError("Email должен быть указан")
         email = self.normalize_email(email)
@@ -15,7 +34,20 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
-        """Создание суперпользователя"""
+        """
+        Создание суперпользователя.
+
+        Параметры:
+        email (str): Электронная почта суперпользователя.
+        password (str, optional): Пароль суперпользователя.
+        **extra_fields: Дополнительные поля для создания суперпользователя.
+
+        Возвращает:
+        CustomUser: Созданный суперпользователь.
+
+        Исключения:
+        ValueError: Если is_staff или is_superuser не установлены в True.
+        """
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -28,7 +60,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
-    """Модель пользователя"""
+    """Модель пользователя."""
 
     username = None
 
@@ -43,6 +75,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self):
+        """Возвращает адрес электронной почты пользователя."""
         return self.email
 
     class Meta:
